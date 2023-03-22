@@ -1,0 +1,59 @@
+body {
+	box-sizing: border-box;
+	font: 16px sans-serif;
+	margin: 0 auto;
+	max-width: 800px;
+	padding: 16px;
+	scroll-behavior: smooth;
+	width: 100%;
+}
+
+p {
+	text-align: justify;
+}
+
+.tombol-ke-atas {
+	float: right;
+	margin-left: 8px;
+}
+
+.label-potongan {
+	border-radius: 16px;
+	border: 1px solid #ddd;
+	cursor: pointer;
+	display: block;
+	margin: 8px 0;
+	padding: 16px 0;
+	width: 100%;
+}
+
+.label-potongan:hover,
+.label-potongan.label-sorot {
+	background-color: #ddf;
+	border-color: #aad;
+}
+
+.label-potongan>small {
+	border-left: 1px solid #ddd;
+	float: right;
+	margin-left: 8px;
+	padding: 0 16px 0 8px;
+}
+
+.label-potongan:hover>small,
+.label-potongan.label-sorot>small {
+	border-color: #aad;
+}
+
+.opsi-potongan {
+	margin: 0 8px 0 16px;
+}
+
+footer {
+	border-top: 1px solid #000;
+	font-size: 75%;
+	margin-top: 48px;
+	opacity: 50%;
+	padding: 8px 0;
+	text-align: end;
+}
