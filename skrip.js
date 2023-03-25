@@ -106,6 +106,9 @@ function gulirKeTerpilih() {
 }
 
 function resetPilihan() {
+	if (!confirm('Reset capaian baca? Capaian baca akan dihapus.')) {
+		return;
+	}
 	localStorage.removeItem('potonganTerpilih');
 	pilihPotongan();
 }
