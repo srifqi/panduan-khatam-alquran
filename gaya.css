@@ -12,6 +12,11 @@ p {
 	text-align: justify;
 }
 
+.emoji {
+	font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Android Emoji", "EmojiSymbols", "EmojiOne Mozilla", "Twemoji Mozilla", "Segoe UI Symbol", sans-serif;
+	font-weight: 400;
+}
+
 .tombol-ke-atas {
 	float: right;
 	margin-left: 8px;
@@ -46,6 +51,16 @@ p {
 }
 
 .opsi-potongan {
+	margin: 0 8px 0 16px;
+}
+
+#paragraf-at-taubah {
+	background-color: #ffe;
+	border-color: #ddb;
+	font-size: 80%;
+}
+
+#paragraf-at-taubah>span.emoji {
 	margin: 0 8px 0 16px;
 }
 

@@ -21,6 +21,7 @@ window.addEventListener('load', () => {
 function buatDaftarBaca(teksMentah) {
 	const daftarBaca = document.getElementById('daftar-baca');
 	const dataPanduan = JSON.parse(teksMentah);
+	let sudahAtTaubah = false;
 	daftarLabel = [];
 	for (const j in dataPanduan) {
 		const seksiJuz = document.createElement('section');
@@ -41,6 +42,14 @@ function buatDaftarBaca(teksMentah) {
 			const ayat = potongan[1];
 			const h0 = potongan[2];
 			const h1 = potongan[3];
+			if (!sudahAtTaubah && surah === 9) {
+				const paragrafAtTaubah = document.createElement('p');
+				paragrafAtTaubah.className = 'label-potongan';
+				paragrafAtTaubah.id = 'paragraf-at-taubah';
+				paragrafAtTaubah.innerHTML = '<span class="emoji">⚠</span> Dianjurkan tidak mengawali At-Taubah dengan basmalah.';
+				seksiJuz.append(paragrafAtTaubah);
+				sudahAtTaubah = true;
+			}
 			const labelPotongan = document.createElement('label');
 			labelPotongan.className = 'label-potongan';
 			labelPotongan.id = `label-${j}-${k}`;
