@@ -1,5 +1,8 @@
-body {
+* {
 	box-sizing: border-box;
+}
+
+body {
 	font: 16px sans-serif;
 	margin: 0 auto;
 	max-width: 800px;
@@ -10,6 +13,10 @@ body {
 
 p {
 	text-align: justify;
+}
+
+small {
+	font-size: smaller;
 }
 
 .emoji {
@@ -58,17 +65,51 @@ p {
 	background-color: #ffe;
 	border-color: #ddb;
 	font-size: 80%;
+	padding: 16px;
 }
 
 #paragraf-at-taubah>span.emoji {
-	margin: 0 8px 0 16px;
+	margin: 0 8px 0 0;
 }
 
 footer {
-	border-top: 1px solid #000;
+	border-top: 1px solid #222;
+	color: #222;
 	font-size: 75%;
 	margin-top: 48px;
-	opacity: 50%;
 	padding: 8px 0;
-	text-align: end;
+	text-align: center;
+}
+
+@media (prefers-color-scheme: dark) {
+	html {
+		background: #000;
+		color: #fff;
+	}
+
+	.label-potongan,
+	.label-potongan>small {
+		border-color: #222;
+	}
+
+	.label-potongan:hover,
+	.label-potongan.label-sorot {
+		background-color: #224;
+		border-color: #447;
+	}
+
+	.label-potongan:hover>small,
+	.label-potongan.label-sorot>small {
+		border-color: #447;
+	}
+
+	#paragraf-at-taubah {
+		background-color: #220;
+		border-color: #662;
+	}
+
+	footer {
+		border-color: #ddd;
+		color: #ddd;
+	}
 }
