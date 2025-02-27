@@ -1,27 +1,51 @@
 let mintaHTTP1;
+let dataPanduan = {};
 let daftarLabel = [];
+let cetakanTerpilih = null;
 
 window.addEventListener('load', () => {
-	mintaHTTP1 = new XMLHttpRequest();
-	mintaHTTP1.onreadystatechange = function () {
-		if (mintaHTTP1.readyState === XMLHttpRequest.DONE) {
-			if (mintaHTTP1.status === 200) {
-				buatDaftarBaca(mintaHTTP1.responseText);
-			}
-		}
-	}
-	mintaHTTP1.open('GET', './data-panduan.json');
-	mintaHTTP1.send();
+	const pilihCetakan = document.getElementById('pilih-cetakan');
+	pilihCetakan.addEventListener('input', aturCetakan);
 	const tombolPergi = document.getElementById('tombol-pergi');
 	tombolPergi.addEventListener('click', gulirKeTerpilih);
 	const tombolReset = document.getElementById('tombol-reset');
 	tombolReset.addEventListener('click', resetPilihan);
+	cetakanTerpilih = localStorage.getItem('cetakanTerpilih');
+	if (!cetakanTerpilih) {
+		cetakanTerpilih = pilihCetakan.value;
+	}
+	pilihCetakan.value = cetakanTerpilih;
+	localStorage.setItem('cetakanTerpilih', cetakanTerpilih);
+	ambilDataPanduan(cetakanTerpilih);
 });
 
-function buatDaftarBaca(teksMentah) {
+function ambilDataPanduan(jumlahHalaman) {
+	if (dataPanduan.hasOwnProperty(jumlahHalaman)) {
+		buatDaftarBaca(dataPanduan[jumlahHalaman]);
+		return
+	}
+	mintaHTTP1 = new XMLHttpRequest();
+	mintaHTTP1.onreadystatechange = () => {
+		if (mintaHTTP1.readyState === XMLHttpRequest.DONE) {
+			if (mintaHTTP1.status === 200) {
+				dataPanduan[jumlahHalaman] = JSON.parse(mintaHTTP1.responseText);
+				buatDaftarBaca(dataPanduan[jumlahHalaman]);
+			}
+		}
+	};
+	mintaHTTP1.open('GET', `./data-panduan/${jumlahHalaman}.json`);
+	mintaHTTP1.send();
 	const daftarBaca = document.getElementById('daftar-baca');
-	const dataPanduan = JSON.parse(teksMentah);
+	daftarBaca.replaceChildren();
+	const pesanAmbilData = document.createElement('p');
+	pesanAmbilData.innerHTML = 'Data panduan sedang diunduh ....';
+	daftarBaca.append(pesanAmbilData);
+}
+
+function buatDaftarBaca(dataPanduan) {
+	const daftarBaca = document.getElementById('daftar-baca');
 	let sudahAtTaubah = false;
+	daftarBaca.replaceChildren();
 	daftarLabel = [];
 	for (const j in dataPanduan) {
 		const seksiJuz = document.createElement('section');
@@ -42,7 +66,7 @@ function buatDaftarBaca(teksMentah) {
 			const ayat = potongan[1];
 			const h0 = potongan[2];
 			const h1 = potongan[3];
-			if (!sudahAtTaubah && surah === 9) {
+			if (!sudahAtTaubah && surah >= 9) {
 				const paragrafAtTaubah = document.createElement('p');
 				paragrafAtTaubah.className = 'label-potongan';
 				paragrafAtTaubah.id = 'paragraf-at-taubah';
@@ -97,6 +121,25 @@ function pilihPotongan(_idLabel) {
 			sorot = false;
 		}
 	}
+}
+
+function aturCetakan() {
+	const pilihCetakan = document.getElementById('pilih-cetakan');
+	if (pilihCetakan.value == cetakanTerpilih) {
+		return;
+	}
+	if (localStorage.getItem('potonganTerpilih').length > 0 &&
+			!confirm('Ubah cetakan terpilih? Capaian baca akan dihapus.')) {
+		cetakanTerpilih = localStorage.getItem('cetakanTerpilih');
+		if (cetakanTerpilih) {
+			pilihCetakan.value = cetakanTerpilih;
+		}
+		return;
+	}
+	cetakanTerpilih = pilihCetakan.value;
+	localStorage.setItem('cetakanTerpilih', cetakanTerpilih);
+	localStorage.removeItem('potonganTerpilih');
+	ambilDataPanduan(cetakanTerpilih);
 }
 
 function gulirKeTerpilih() {

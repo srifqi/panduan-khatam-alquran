@@ -10,15 +10,22 @@
 </head>
 <body>
 	<h1>Panduan Khatam Al-Qur'an</h1>
-	<p>Panduan ini untuk mengkhatamkan Al-Qur'an dengan pembagian lima (5) kali baca per juz. Artinya, satu juz dibagi menjadi lima bagian. Pembagian ini biasa dipakai saat bulan Ramadan, yaitu satu hari satu juz dan bacanya tiap waktu salat.</p>
-	<section id="daftar-baca">
+	<p>Panduan ini digunakan untuk mengkhatamkan Al-Qur'an dengan pembagian lima (5) kali baca per juz. Artinya, satu juz dibagi menjadi lima bagian. Pembagian ini biasa dipakai saat bulan Ramadan, yaitu satu hari satu juz dan bacanya tiap waktu salat.</p>
+	<section>
 		<h2>Pembagian Baca</h2>
 		<p>Berikut pembagian bacanya. Surah dan ayat yang ditulis adalah ayat pertama pada potongan pembagian baca. Klik entri daftar untuk menyimpan capaian baca secara lokal.</p>
-		<p><small>Penomoran halaman menggunakan cetakan Madinah.</small></p>
+		<p>
+			<label for="pilih-cetakan">Pilih cetakan: </label>
+			<select id="pilih-cetakan">
+				<option value="604">604 halaman (15 baris)</option>
+				<option value="485">485 halaman (18 baris)</option>
+			</select>
+		</p>
 		<p>
 			<button id='tombol-pergi'>Pergi ke capaian baca terakhir</button>
 			<button id='tombol-reset'>Reset capaian baca</button>
 		</p>
+		<div id="daftar-baca"></div>
 	</section>
 	<footer>Panduan Khatam Al-Qur'an | Dibuat dengan <span class="emoji">❤️</span> oleh srifqi</footer>
 	<script src="skrip.js"></script>
