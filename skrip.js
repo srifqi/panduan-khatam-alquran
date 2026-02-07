@@ -10,30 +10,32 @@ window.addEventListener('load', () => {
 	tombolPergi.addEventListener('click', gulirKeTerpilih);
 	const tombolReset = document.getElementById('tombol-reset');
 	tombolReset.addEventListener('click', resetPilihan);
+
 	cetakanTerpilih = localStorage.getItem('cetakanTerpilih');
 	if (!cetakanTerpilih) {
 		cetakanTerpilih = pilihCetakan.value;
 	}
 	pilihCetakan.value = cetakanTerpilih;
 	localStorage.setItem('cetakanTerpilih', cetakanTerpilih);
-	ambilDataPanduan(cetakanTerpilih);
+
+	ambilDataPanduan();
 });
 
-function ambilDataPanduan(jumlahHalaman) {
-	if (dataPanduan.hasOwnProperty(jumlahHalaman)) {
-		buatDaftarBaca(dataPanduan[jumlahHalaman]);
+function ambilDataPanduan() {
+	if (dataPanduan.hasOwnProperty(cetakanTerpilih)) {
+		buatDaftarBaca(dataPanduan[cetakanTerpilih]);
 		return
 	}
 	mintaHTTP1 = new XMLHttpRequest();
 	mintaHTTP1.onreadystatechange = () => {
 		if (mintaHTTP1.readyState === XMLHttpRequest.DONE) {
 			if (mintaHTTP1.status === 200) {
-				dataPanduan[jumlahHalaman] = JSON.parse(mintaHTTP1.responseText);
-				buatDaftarBaca(dataPanduan[jumlahHalaman]);
+				dataPanduan[cetakanTerpilih] = JSON.parse(mintaHTTP1.responseText);
+				buatDaftarBaca(dataPanduan[cetakanTerpilih]);
 			}
 		}
 	};
-	mintaHTTP1.open('GET', `./data-panduan/${jumlahHalaman}.json`);
+	mintaHTTP1.open('GET', `./data-panduan/${cetakanTerpilih}.json`);
 	mintaHTTP1.send();
 	const daftarBaca = document.getElementById('daftar-baca');
 	daftarBaca.replaceChildren();
@@ -139,7 +141,7 @@ function aturCetakan() {
 	cetakanTerpilih = pilihCetakan.value;
 	localStorage.setItem('cetakanTerpilih', cetakanTerpilih);
 	localStorage.removeItem('potonganTerpilih');
-	ambilDataPanduan(cetakanTerpilih);
+	ambilDataPanduan();
 }
 
 function gulirKeTerpilih() {
