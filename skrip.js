@@ -1,5 +1,5 @@
 let mintaHTTP1;
-let dataPanduan = {};
+let dataPanduanTermuat = {};
 let daftarLabel = [];
 let cetakanTerpilih = null;
 
@@ -22,16 +22,25 @@ window.addEventListener('load', () => {
 });
 
 function ambilDataPanduan() {
-	if (dataPanduan.hasOwnProperty(cetakanTerpilih)) {
-		buatDaftarBaca(dataPanduan[cetakanTerpilih]);
+	if (dataPanduanTermuat.hasOwnProperty(cetakanTerpilih)) {
+		buatDaftarBaca(dataPanduanTermuat[cetakanTerpilih]);
 		return
 	}
 	mintaHTTP1 = new XMLHttpRequest();
 	mintaHTTP1.onreadystatechange = () => {
 		if (mintaHTTP1.readyState === XMLHttpRequest.DONE) {
 			if (mintaHTTP1.status === 200) {
-				dataPanduan[cetakanTerpilih] = JSON.parse(mintaHTTP1.responseText);
-				buatDaftarBaca(dataPanduan[cetakanTerpilih]);
+				const dataMentah = JSON.parse(mintaHTTP1.responseText);
+				const dataTerolah = [];
+				for (const j in dataMentah) {
+					const juz = Number(j);
+					let i = 0;
+					for (const p of dataMentah[j]) {
+						dataTerolah.push([juz, i ++, p[0], p[1], p[2], p[3]]);
+					}
+				}
+				dataPanduanTermuat[cetakanTerpilih] = dataTerolah;
+				buatDaftarBaca(dataPanduanTermuat[cetakanTerpilih]);
 			}
 		}
 	};
@@ -49,52 +58,68 @@ function buatDaftarBaca(dataPanduan) {
 	let sudahAtTaubah = false;
 	daftarBaca.replaceChildren();
 	daftarLabel = [];
-	for (const j in dataPanduan) {
-		const seksiJuz = document.createElement('section');
-		const judulJuz = document.createElement('h3');
-		judulJuz.innerText = `Juz ${j}`;
-		const tombolKeAtas = document.createElement('button');
-		tombolKeAtas.className = 'tombol-ke-atas';
-		tombolKeAtas.innerText = 'Kembali ke atas';
-		tombolKeAtas.addEventListener('click', () => {
-			const daftarBaca = document.getElementById('daftar-baca');
-			daftarBaca.scrollIntoView({ behavior: 'smooth' });
-		});
-		judulJuz.append(tombolKeAtas);
-		seksiJuz.append(judulJuz);
-		for (const k in dataPanduan[j]) {
-			const potongan = dataPanduan[j][k];
-			const surah = potongan[0];
-			const ayat = potongan[1];
-			const h0 = potongan[2];
-			const h1 = potongan[3];
-			if (!sudahAtTaubah && surah >= 9) {
-				const paragrafAtTaubah = document.createElement('p');
-				paragrafAtTaubah.className = 'label-potongan';
-				paragrafAtTaubah.id = 'paragraf-at-taubah';
-				paragrafAtTaubah.innerHTML = '<span class="emoji">⚠</span> Dianjurkan tidak mengawali At-Taubah dengan basmalah.';
-				seksiJuz.append(paragrafAtTaubah);
-				sudahAtTaubah = true;
-			}
-			const labelPotongan = document.createElement('label');
-			labelPotongan.className = 'label-potongan';
-			labelPotongan.id = `label-${j}-${k}`;
-			labelPotongan.innerHTML = `${daftarNamaSurah[surah]} (${surah}): ${ayat} <small>Halaman ${h0}–${h1}</small>`;
-			labelPotongan.addEventListener('click', ((z) => {
-				return () => pilihPotongan(z);
-			})(`label-${j}-${k}`));
-			const opsiPotongan = document.createElement('input');
-			opsiPotongan.type = 'radio';
-			opsiPotongan.name = 'potongan';
-			opsiPotongan.id = `potongan-${j}-${k}`;
-			opsiPotongan.value = `${j}-${k}`;
-			opsiPotongan.className = 'opsi-potongan';
-			labelPotongan.prepend(opsiPotongan);
-			seksiJuz.append(labelPotongan);
-			daftarLabel.push(labelPotongan);
+	let seksiHari = '';
+	let hariKe = 0;
+	let h = 0;
+	let juzTerakhir = -1;
+	for (let i = 0; i < dataPanduan.length; i ++) {
+		const ii = i % dataPanduan.length;
+		const potongan = dataPanduan[ii];
+		const juz = potongan[0];
+		const k = potongan[1];
+		const surah = potongan[2];
+		const ayat = potongan[3];
+		const h0 = potongan[4];
+		const h1 = potongan[5];
+		if (h == 0 || h == 5) {
+			daftarBaca.append(seksiHari);
+			seksiHari = document.createElement('section');
+			const judulHari = document.createElement('h3');
+			judulHari.innerText = `Hari Ke-${++ hariKe}`;
+			const tombolKeAtas = document.createElement('button');
+			tombolKeAtas.className = 'tombol-ke-atas';
+			tombolKeAtas.innerText = 'Kembali ke atas';
+			tombolKeAtas.addEventListener('click', () => {
+				const daftarBaca = document.getElementById('daftar-baca');
+				daftarBaca.scrollIntoView({ behavior: 'smooth' });
+			});
+			judulHari.append(tombolKeAtas);
+			seksiHari.append(judulHari);
+			h = 0;
 		}
-		daftarBaca.append(seksiJuz);
+		if (juzTerakhir != juz) {
+			const judulJuz = document.createElement('h4');
+			judulJuz.innerText = `Juz ${juz}`;
+			seksiHari.append(judulJuz);
+			juzTerakhir = juz;
+		}
+		if (!sudahAtTaubah && surah >= 9) {
+			const paragrafAtTaubah = document.createElement('p');
+			paragrafAtTaubah.className = 'label-potongan';
+			paragrafAtTaubah.id = 'paragraf-at-taubah';
+			paragrafAtTaubah.innerHTML = '<span class="emoji">⚠</span> Dianjurkan tidak mengawali At-Taubah dengan basmalah.';
+			seksiHari.append(paragrafAtTaubah);
+			sudahAtTaubah = true;
+		}
+		const labelPotongan = document.createElement('label');
+		labelPotongan.className = 'label-potongan';
+		labelPotongan.id = `label-${juz}-${k}`;
+		labelPotongan.innerHTML = `${daftarNamaSurah[surah]} (${surah}): ${ayat} <small>Halaman ${h0}–${h1}</small>`;
+		labelPotongan.addEventListener('click', ((z) => {
+			return () => pilihPotongan(z);
+		})(`label-${juz}-${k}`));
+		const opsiPotongan = document.createElement('input');
+		opsiPotongan.type = 'radio';
+		opsiPotongan.name = 'potongan';
+		opsiPotongan.id = `potongan-${juz}-${k}`;
+		opsiPotongan.value = `${juz}-${k}`;
+		opsiPotongan.className = 'opsi-potongan';
+		labelPotongan.prepend(opsiPotongan);
+		seksiHari.append(labelPotongan);
+		daftarLabel.push(labelPotongan);
+		h ++;
 	}
+	daftarBaca.append(seksiHari);
 	pilihPotongan();
 }
 
