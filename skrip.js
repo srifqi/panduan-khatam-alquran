@@ -6,6 +6,7 @@ let cetakanTerpilih = null;
 window.addEventListener('load', () => {
 	const pilihCetakan = document.getElementById('pilih-cetakan');
 	pilihCetakan.addEventListener('input', aturCetakan);
+
 	const tombolPergi = document.getElementById('tombol-pergi');
 	tombolPergi.addEventListener('click', gulirKeTerpilih);
 	const tombolReset = document.getElementById('tombol-reset');
@@ -26,12 +27,14 @@ function ambilDataPanduan() {
 		susunDaftarPotongan(dataPanduanTermuat[cetakanTerpilih]);
 		return
 	}
+
 	mintaHTTP1 = new XMLHttpRequest();
 	mintaHTTP1.onreadystatechange = () => {
 		if (mintaHTTP1.readyState === XMLHttpRequest.DONE) {
 			if (mintaHTTP1.status === 200) {
 				const dataMentah = JSON.parse(mintaHTTP1.responseText);
 				const dataTerolah = [];
+
 				for (const j in dataMentah) {
 					const juz = Number(j);
 					let i = 0;
@@ -39,6 +42,7 @@ function ambilDataPanduan() {
 						dataTerolah.push([juz, i ++, p[0], p[1], p[2], p[3]]);
 					}
 				}
+
 				dataPanduanTermuat[cetakanTerpilih] = dataTerolah;
 				susunDaftarPotongan(dataPanduanTermuat[cetakanTerpilih]);
 			}
@@ -46,8 +50,10 @@ function ambilDataPanduan() {
 	};
 	mintaHTTP1.open('GET', `./data-panduan/${cetakanTerpilih}.json`);
 	mintaHTTP1.send();
+
 	const daftarBaca = document.getElementById('daftar-baca');
 	daftarBaca.replaceChildren();
+
 	const pesanAmbilData = document.createElement('p');
 	pesanAmbilData.innerHTML = 'Data panduan sedang diunduh ....';
 	daftarBaca.append(pesanAmbilData);
@@ -57,6 +63,7 @@ function susunDaftarPotongan(dataPanduan) {
 	const jumlahBaca = 1;
 	const dataTersusun = [];
 	let harian = [0, 0, []];
+
 	for (let i = 0; i < dataPanduan.length * jumlahBaca; ) {
 		const ii = i % dataPanduan.length;
 		const potongan = dataPanduan[ii];
@@ -65,36 +72,45 @@ function susunDaftarPotongan(dataPanduan) {
 		const surah = potongan[2];
 		const ayat = potongan[3];
 		const h0 = potongan[4];
+
 		const i2 = ((i += jumlahBaca) - 1) % dataPanduan.length;
 		const potongan2 = dataPanduan[i2];
 		const h1 = potongan2[5];
+
 		if (harian[2].length == 0) {
 			harian[0] = juz;
 		}
+
 		harian[2].push([surah, ayat, h0, h1]);
+
 		if (harian[2].length == 5) {
 			harian[1] = juz;
 			dataTersusun.push(harian);
 			harian = [0, 0, []];
 		}
 	}
+
 	buatDaftarBaca(dataTersusun);
 }
 
 function buatDaftarBaca(dataTersusun) {
 	const daftarBaca = document.getElementById('daftar-baca');
-	let sudahAtTaubah = false;
 	daftarBaca.replaceChildren();
 	daftarLabel = [];
+	let sudahAtTaubah = false;
+
 	for (let i = 0; i < dataTersusun.length; i ++) {
 		const hariKe = i + 1;
 		const hari = dataTersusun[i];
 		const juzAwal = hari[0];
 		const juzAkhir = hari[1];
 		const daftarPotongan = hari[2];
+
 		const seksiHari = document.createElement('section');
+
 		const judulHari = document.createElement('h3');
 		judulHari.innerText = `Hari Ke-${hariKe}`;
+
 		judulJuz = document.createElement('small');
 		judulJuz.className = 'judul-juz';
 		if (juzAwal == juzAkhir) {
@@ -103,6 +119,7 @@ function buatDaftarBaca(dataTersusun) {
 			judulJuz.innerText = `(Juz ${juzAwal}–${juzAkhir})`;
 		}
 		judulHari.append(judulJuz)
+
 		const tombolKeAtas = document.createElement('button');
 		tombolKeAtas.className = 'tombol-ke-atas';
 		tombolKeAtas.innerText = 'Kembali ke atas';
@@ -111,16 +128,20 @@ function buatDaftarBaca(dataTersusun) {
 			daftarBaca.scrollIntoView({ behavior: 'smooth' });
 		});
 		judulHari.append(tombolKeAtas);
+
 		seksiHari.append(judulHari);
+
 		if (juzAwal == 1) {
 			sudahAtTaubah = false;
 		}
+
 		for (let j = 0; j < daftarPotongan.length; j ++) {
 			const potongan = daftarPotongan[j];
 			const surah = potongan[0];
 			const ayat = potongan[1];
 			const h0 = potongan[2];
 			const h1 = potongan[3];
+
 			if (!sudahAtTaubah && surah >= 9) {
 				const paragrafAtTaubah = document.createElement('p');
 				paragrafAtTaubah.className = 'label-potongan';
@@ -129,6 +150,7 @@ function buatDaftarBaca(dataTersusun) {
 				seksiHari.append(paragrafAtTaubah);
 				sudahAtTaubah = true;
 			}
+
 			const labelPotongan = document.createElement('label');
 			labelPotongan.className = 'label-potongan';
 			labelPotongan.id = `label-${i}-${j}`;
@@ -136,6 +158,7 @@ function buatDaftarBaca(dataTersusun) {
 			labelPotongan.addEventListener('click', ((z) => {
 				return () => pilihPotongan(z);
 			})(`label-${i}-${j}`));
+
 			const opsiPotongan = document.createElement('input');
 			opsiPotongan.type = 'radio';
 			opsiPotongan.name = 'potongan';
@@ -143,11 +166,14 @@ function buatDaftarBaca(dataTersusun) {
 			opsiPotongan.value = `${i}-${j}`;
 			opsiPotongan.className = 'opsi-potongan';
 			labelPotongan.prepend(opsiPotongan);
+
 			seksiHari.append(labelPotongan);
 			daftarLabel.push(labelPotongan);
 		}
+
 		daftarBaca.append(seksiHari);
 	}
+
 	pilihPotongan();
 }
 
@@ -162,12 +188,14 @@ function pilihPotongan(_idLabel) {
 		}
 	}
 	localStorage.setItem('potonganTerpilih', idLabel);
+
 	let sorot = true;
 	const regexId = /label-(\d+)-(\d+)/i;
 	if (!regexId.test(idLabel)) {
 		idLabel = '';
 		sorot = false;
 	}
+
 	for (const label of daftarLabel) {
 		label.className = sorot ? 'label-potongan label-sorot' : 'label-potongan';
 		label.getElementsByTagName('input')[0].checked = '';
@@ -183,6 +211,7 @@ function aturCetakan() {
 	if (pilihCetakan.value == cetakanTerpilih) {
 		return;
 	}
+
 	if (localStorage.getItem('potonganTerpilih').length > 0 &&
 			!confirm('Ubah cetakan terpilih? Capaian baca akan dihapus.')) {
 		cetakanTerpilih = localStorage.getItem('cetakanTerpilih');
@@ -191,9 +220,11 @@ function aturCetakan() {
 		}
 		return;
 	}
+
 	cetakanTerpilih = pilihCetakan.value;
 	localStorage.setItem('cetakanTerpilih', cetakanTerpilih);
 	localStorage.removeItem('potonganTerpilih');
+
 	ambilDataPanduan();
 }
 
@@ -216,17 +247,19 @@ function resetPilihan() {
 	if (!confirm('Reset capaian baca? Capaian baca akan dihapus.')) {
 		return;
 	}
+
 	localStorage.removeItem('potonganTerpilih');
+
 	pilihPotongan();
 }
 
 const daftarNamaSurah = {
-	"1": "Al-Fātiḥah ",
-	"2": "Al-Baqarah ",
+	"1": "Al-Fātiḥah",
+	"2": "Al-Baqarah",
 	"3": "Āli ‘Imrān",
-	"4": "An-Nisā' ",
+	"4": "An-Nisā'",
 	"5": "Al-Mā'idah",
-	"6": "Al-An‘ām ",
+	"6": "Al-An‘ām",
 	"7": "Al-A‘rāf",
 	"8": "Al-Anfāl",
 	"9": "At-Taubah",
@@ -241,7 +274,7 @@ const daftarNamaSurah = {
 	"18": "Al-Kahf",
 	"19": "Maryam",
 	"20": "Ṭāhā",
-	"21": "Al-Anbiyā' ",
+	"21": "Al-Anbiyā'",
 	"22": "Al-Ḥajj",
 	"23": "Al-Mu'minūn",
 	"24": "An-Nūr",
@@ -251,23 +284,23 @@ const daftarNamaSurah = {
 	"28": "Al-Qaṣaṣ",
 	"29": "Al-‘Ankabūt",
 	"30": "Ar-Rūm",
-	"31": "Luqmān ",
+	"31": "Luqmān",
 	"32": "As-Sajdah",
 	"33": "Al-Aḥzāb",
-	"34": "Saba' ",
+	"34": "Saba'",
 	"35": "Fāṭir",
 	"36": "Yāsīn",
 	"37": "Aṣ-Ṣāffāt",
-	"38": "Ṣād ",
+	"38": "Ṣād",
 	"39": "Az-Zumar",
-	"40": "Gāfir ",
+	"40": "Gāfir",
 	"41": "Fuṣṣilat",
 	"42": "Asy-Syūrā",
 	"43": "Az-Zukhruf",
 	"44": "Ad-Dukhān",
 	"45": "Al-Jāṡiyah",
 	"46": "Al-Aḥqāf",
-	"47": "Muḥammad ",
+	"47": "Muḥammad",
 	"48": "Al-Fatḥ",
 	"49": "Al-Ḥujurāt",
 	"50": "Qāf",
