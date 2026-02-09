@@ -24,6 +24,10 @@ small {
 	font-weight: 400;
 }
 
+.judul-juz {
+	margin-left: 8px;
+}
+
 .tombol-ke-atas {
 	float: right;
 	margin-left: 8px;

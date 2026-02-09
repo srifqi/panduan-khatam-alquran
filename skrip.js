@@ -59,9 +59,11 @@ function buatDaftarBaca(dataPanduan) {
 	daftarBaca.replaceChildren();
 	daftarLabel = [];
 	let seksiHari = '';
+	let judulJuz = document.createElement('small');
 	let hariKe = 0;
 	let h = 0;
-	let juzTerakhir = -1;
+	let juzMulai = 1;
+	let juzSebelum = 1;
 	for (let i = 0; i < dataPanduan.length; i ++) {
 		const ii = i % dataPanduan.length;
 		const potongan = dataPanduan[ii];
@@ -72,10 +74,20 @@ function buatDaftarBaca(dataPanduan) {
 		const h0 = potongan[4];
 		const h1 = potongan[5];
 		if (h == 0 || h == 5) {
+			if (juzMulai != juzSebelum) {
+				judulJuz.innerText += `–${juzSebelum}`;
+			}
+			if (judulJuz.innerText != '') {
+				judulJuz.innerText = `(${judulJuz.innerText})`;
+			}
 			daftarBaca.append(seksiHari);
 			seksiHari = document.createElement('section');
 			const judulHari = document.createElement('h3');
 			judulHari.innerText = `Hari Ke-${++ hariKe}`;
+			judulJuz = document.createElement('small');
+			judulJuz.className = 'judul-juz';
+			judulJuz.innerText = `Juz ${juz}`;
+			judulHari.append(judulJuz)
 			const tombolKeAtas = document.createElement('button');
 			tombolKeAtas.className = 'tombol-ke-atas';
 			tombolKeAtas.innerText = 'Kembali ke atas';
@@ -85,13 +97,8 @@ function buatDaftarBaca(dataPanduan) {
 			});
 			judulHari.append(tombolKeAtas);
 			seksiHari.append(judulHari);
+			juzMulai = juz;
 			h = 0;
-		}
-		if (juzTerakhir != juz) {
-			const judulJuz = document.createElement('h4');
-			judulJuz.innerText = `Juz ${juz}`;
-			seksiHari.append(judulJuz);
-			juzTerakhir = juz;
 		}
 		if (!sudahAtTaubah && surah >= 9) {
 			const paragrafAtTaubah = document.createElement('p');
@@ -117,7 +124,14 @@ function buatDaftarBaca(dataPanduan) {
 		labelPotongan.prepend(opsiPotongan);
 		seksiHari.append(labelPotongan);
 		daftarLabel.push(labelPotongan);
+		juzSebelum = juz;
 		h ++;
+	}
+	if (juzMulai != juzSebelum) {
+		judulJuz.innerText += `–${juzSebelum}`;
+	}
+	if (judulJuz.innerText != '') {
+		judulJuz.innerText = `(${judulJuz.innerText})`;
 	}
 	daftarBaca.append(seksiHari);
 	pilihPotongan();
