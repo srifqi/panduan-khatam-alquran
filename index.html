@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="author" content="srifqi">
-	<meta name="description" content="Panduan untuk mengkhatamkan Al-Qur'an dengan pembagian lima (5) kali baca per juz">
+	<meta name="description" content="Panduan untuk mengkhatamkan Al-Qur'an dengan pembagian lima (5) kali baca per hari">
 	<meta name="viewport" content="width=device-width,height=device-height,initial-scale=1">
 	<meta property="og:title" content="Panduan Khatam Al-Qur'an">
 	<meta property="og:type" content="website">
@@ -16,21 +16,54 @@
 </head>
 <body>
 	<h1>Panduan Khatam Al-Qur'an</h1>
-	<p>Panduan ini digunakan untuk mengkhatamkan Al-Qur'an dengan pembagian lima (5) kali baca per juz. Artinya, satu juz dibagi menjadi lima bagian. Pembagian ini biasa dipakai saat bulan Ramadan, yaitu satu hari satu juz dan bacanya tiap waktu salat.</p>
+	<p>Panduan ini digunakan untuk mengkhatamkan Al-Qur'an dengan pembagian lima (5) kali baca per hari. Pembagian ini biasa dipakai saat bulan Ramadan, misal satu hari satu juz dan bacanya tiap waktu salat (dari Magrib hingga Asar sesuai penanggalan Hijriah).</p>
+	<p>Selain itu, jumlah khatam dan jumlah hari bisa diatur sehingga panduan dapat sesuai dengan keperluan/target yang diinginkan.</p>
 	<section>
 		<h2>Pembagian Baca</h2>
 		<p>Berikut pembagian bacanya. Surah dan ayat yang ditulis adalah ayat pertama pada potongan pembagian baca. Klik entri daftar untuk menyimpan capaian baca secara lokal.</p>
 		<p>
 			<label for="pilih-cetakan">Pilih cetakan: </label>
 			<select id="pilih-cetakan">
-				<option value="604">604 halaman (15 baris)</option>
+				<option value="604" selected>604 halaman (15 baris)</option>
 				<option value="485">485 halaman (18 baris)</option>
+			</select>
+		</p>
+		<p>
+			<label for="pilih-jumlah-khatam">Jumlah khatam: </label>
+			<select id="pilih-jumlah-khatam">
+				<option value="1" selected>1 kali</option>
+				<option value="2">2 kali</option>
+				<option value="3">3 kali</option>
+				<option value="4">4 kali</option>
+				<option value="5">5 kali</option>
+			</select>
+		</p>
+		<p>
+			<label for="pilih-jumlah-hari">Jumlah hari: </label>
+			<select id="pilih-jumlah-hari">
+				<option value="15">15 hari</option>
+				<option value="16">16 hari</option>
+				<option value="17">17 hari</option>
+				<option value="18">18 hari</option>
+				<option value="19">19 hari</option>
+				<option value="20">20 hari</option>
+				<option value="21">21 hari</option>
+				<option value="22">22 hari</option>
+				<option value="23">23 hari</option>
+				<option value="24">24 hari</option>
+				<option value="25">25 hari</option>
+				<option value="26">26 hari</option>
+				<option value="27">27 hari</option>
+				<option value="28">28 hari</option>
+				<option value="29">29 hari</option>
+				<option value="30" selected>30 hari</option>
 			</select>
 		</p>
 		<p>
 			<button id='tombol-pergi'>Pergi ke capaian baca terakhir</button>
 			<button id='tombol-reset'>Reset capaian baca</button>
 		</p>
+		<p class="label-potongan paragraf-informasi"><span class="emoji">ℹ️</span> Surah dan ayat yang ditulis adalah ayat pertama pada potongan pembagian baca.</p>
 		<div id="daftar-baca"></div>
 	</section>
 	<footer>Panduan Khatam Al-Qur'an | Dibuat dengan <span class="emoji">❤️</span> oleh srifqi</footer>

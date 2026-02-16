@@ -21,6 +21,7 @@ small {
 
 .emoji {
 	font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Android Emoji", "EmojiSymbols", "EmojiOne Mozilla", "Twemoji Mozilla", "Segoe UI Symbol", sans-serif;
+	font-variant-emoji: emoji;
 	font-weight: 400;
 }
 
@@ -65,14 +66,22 @@ small {
 	margin: 0 8px 0 16px;
 }
 
-#paragraf-at-taubah {
-	background-color: #ffe;
-	border-color: #ddb;
+.paragraf-informasi, .paragraf-at-taubah {
 	font-size: 80%;
 	padding: 16px;
 }
 
-#paragraf-at-taubah>span.emoji {
+.paragraf-informasi {
+	background-color: #eff;
+	border-color: #bdd;
+}
+
+.paragraf-at-taubah {
+	background-color: #ffe;
+	border-color: #ddb;
+}
+
+.paragraf-informasi>span.emoji, .paragraf-at-taubah>span.emoji {
 	margin: 0 8px 0 0;
 }
 
@@ -107,7 +116,12 @@ footer {
 		border-color: #447;
 	}
 
-	#paragraf-at-taubah {
+	.paragraf-informasi {
+		background-color: #022;
+		border-color: #266;
+	}
+
+	.paragraf-at-taubah {
 		background-color: #220;
 		border-color: #662;
 	}

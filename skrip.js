@@ -1,11 +1,25 @@
 let mintaHTTP1;
 let dataPanduanTermuat = {};
 let daftarLabel = [];
-let cetakanTerpilih = null;
+let cetakanTerpilih = '604';
+let jumlahKhatamTerpilih = 1;
+let jumlahHariTerpilih = 30;
+
+Storage.prototype.getItemAsNumber = function(name) {
+	const item = this.getItem(name);
+	if (!item) {
+		return null;
+	}
+	return Number(item);
+};
 
 window.addEventListener('load', () => {
 	const pilihCetakan = document.getElementById('pilih-cetakan');
 	pilihCetakan.addEventListener('input', aturCetakan);
+	const pilihJumlahKhatam = document.getElementById('pilih-jumlah-khatam');
+	pilihJumlahKhatam.addEventListener('input', aturJumlahKhatam);
+	const pilihJumlahHari = document.getElementById('pilih-jumlah-hari');
+	pilihJumlahHari.addEventListener('input', aturJumlahHari);
 
 	const tombolPergi = document.getElementById('tombol-pergi');
 	tombolPergi.addEventListener('click', gulirKeTerpilih);
@@ -18,6 +32,20 @@ window.addEventListener('load', () => {
 	}
 	pilihCetakan.value = cetakanTerpilih;
 	localStorage.setItem('cetakanTerpilih', cetakanTerpilih);
+
+	jumlahKhatamTerpilih = localStorage.getItemAsNumber('jumlahKhatamTerpilih');
+	if (!jumlahKhatamTerpilih) {
+		jumlahKhatamTerpilih = Number(pilihJumlahKhatam.value);
+	}
+	pilihJumlahKhatam.value = jumlahKhatamTerpilih;
+	localStorage.setItem('jumlahKhatamTerpilih', jumlahKhatamTerpilih);
+
+	jumlahHariTerpilih = localStorage.getItemAsNumber('jumlahHariTerpilih');
+	if (!jumlahHariTerpilih) {
+		jumlahHariTerpilih = Number(pilihJumlahHari.value);
+	}
+	pilihJumlahHari.value = jumlahHariTerpilih;
+	localStorage.setItem('jumlahHariTerpilih', jumlahHariTerpilih);
 
 	ambilDataPanduan();
 });
@@ -60,31 +88,42 @@ function ambilDataPanduan() {
 }
 
 function susunDaftarPotongan(dataPanduan) {
-	const jumlahBaca = 1;
 	const dataTersusun = [];
 	let harian = [0, 0, []];
 
-	for (let i = 0; i < dataPanduan.length * jumlahBaca; ) {
+	const totalPotongan = dataPanduan.length * jumlahKhatamTerpilih;
+	const totalSesi = jumlahHariTerpilih * 5;
+
+	const jumlahPengali = Math.floor(totalPotongan / (totalSesi));
+	const jumlahTambah = totalPotongan % (totalSesi);
+
+	for (let i = 0; i < totalPotongan; ) {
 		const ii = i % dataPanduan.length;
 		const potongan = dataPanduan[ii];
-		const juz = potongan[0];
+		const juz0 = potongan[0];
 		const k = potongan[1];
 		const surah = potongan[2];
 		const ayat = potongan[3];
 		const h0 = potongan[4];
 
-		const i2 = ((i += jumlahBaca) - 1) % dataPanduan.length;
+		i += jumlahPengali;
+		if (dataTersusun.length * 5 + harian[2].length < jumlahTambah) {
+			i += 1;
+		}
+
+		const i2 = (i - 1) % dataPanduan.length;
 		const potongan2 = dataPanduan[i2];
+		const juz1 = potongan2[0];
 		const h1 = potongan2[5];
 
 		if (harian[2].length == 0) {
-			harian[0] = juz;
+			harian[0] = juz0;
 		}
 
 		harian[2].push([surah, ayat, h0, h1]);
 
 		if (harian[2].length == 5) {
-			harian[1] = juz;
+			harian[1] = juz1;
 			dataTersusun.push(harian);
 			harian = [0, 0, []];
 		}
@@ -131,7 +170,7 @@ function buatDaftarBaca(dataTersusun) {
 
 		seksiHari.append(judulHari);
 
-		if (juzAwal == 1) {
+		if (juzAwal < 10) {
 			sudahAtTaubah = false;
 		}
 
@@ -142,10 +181,16 @@ function buatDaftarBaca(dataTersusun) {
 			const h0 = potongan[2];
 			const h1 = potongan[3];
 
+			if (h1 < h0) {
+				const paragrafMulaiLagi = document.createElement('p');
+				paragrafMulaiLagi.className = 'label-potongan paragraf-informasi';
+				paragrafMulaiLagi.innerHTML = '<span class="emoji">⬇️</span> Khatam membaca, lalu mulai lagi dari awal.';
+				seksiHari.append(paragrafMulaiLagi);
+			}
+
 			if (!sudahAtTaubah && surah >= 9) {
 				const paragrafAtTaubah = document.createElement('p');
-				paragrafAtTaubah.className = 'label-potongan';
-				paragrafAtTaubah.id = 'paragraf-at-taubah';
+				paragrafAtTaubah.className = 'label-potongan paragraf-at-taubah';
 				paragrafAtTaubah.innerHTML = '<span class="emoji">⚠</span> Dianjurkan tidak mengawali At-Taubah dengan basmalah.';
 				seksiHari.append(paragrafAtTaubah);
 				sudahAtTaubah = true;
@@ -223,6 +268,50 @@ function aturCetakan() {
 
 	cetakanTerpilih = pilihCetakan.value;
 	localStorage.setItem('cetakanTerpilih', cetakanTerpilih);
+	localStorage.removeItem('potonganTerpilih');
+
+	ambilDataPanduan();
+}
+
+function aturJumlahKhatam() {
+	const pilihJumlahKhatam = document.getElementById('pilih-jumlah-khatam');
+	if (Number(pilihJumlahKhatam.value) == jumlahKhatamTerpilih) {
+		return;
+	}
+
+	if (localStorage.getItem('potonganTerpilih').length > 0 &&
+			!confirm('Ubah jumlah khatam terpilih? Capaian baca akan dihapus.')) {
+		jumlahKhatamTerpilih = localStorage.getItemAsNumber('jumlahKhatamTerpilih');
+		if (jumlahKhatamTerpilih) {
+			pilihJumlahKhatam.value = jumlahKhatamTerpilih;
+		}
+		return;
+	}
+
+	jumlahKhatamTerpilih = Number(pilihJumlahKhatam.value);
+	localStorage.setItem('jumlahKhatamTerpilih', jumlahKhatamTerpilih);
+	localStorage.removeItem('potonganTerpilih');
+
+	ambilDataPanduan();
+}
+
+function aturJumlahHari() {
+	const pilihJumlahHari = document.getElementById('pilih-jumlah-hari');
+	if (Number(pilihJumlahHari.value) == jumlahHariTerpilih) {
+		return;
+	}
+
+	if (localStorage.getItem('potonganTerpilih').length > 0 &&
+			!confirm('Ubah jumlah hari terpilih? Capaian baca akan dihapus.')) {
+		jumlahHariTerpilih = localStorage.getItemAsNumber('jumlahHariTerpilih');
+		if (jumlahHariTerpilih) {
+			pilihJumlahHari.value = jumlahHariTerpilih;
+		}
+		return;
+	}
+
+	jumlahHariTerpilih = Number(pilihJumlahHari.value);
+	localStorage.setItem('jumlahHariTerpilih', jumlahHariTerpilih);
 	localStorage.removeItem('potonganTerpilih');
 
 	ambilDataPanduan();
