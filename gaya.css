@@ -71,7 +71,7 @@ small {
 	margin: 0 8px 0 16px;
 }
 
-.paragraf-informasi, .paragraf-at-taubah {
+.paragraf-informasi, .paragraf-at-taubah, .paragraf-selesai-baca {
 	font-size: 80%;
 	padding: 16px;
 }
@@ -84,6 +84,12 @@ small {
 .paragraf-at-taubah {
 	background-color: #ffe;
 	border-color: #ddb;
+}
+
+.paragraf-selesai-baca {
+	background-color: #efe;
+	border-color: #bdb;
+	display: none;
 }
 
 .paragraf-informasi>span.emoji, .paragraf-at-taubah>span.emoji {
@@ -129,6 +135,11 @@ footer {
 	.paragraf-at-taubah {
 		background-color: #220;
 		border-color: #662;
+	}
+
+	.paragraf-selesai-baca {
+		background-color: #020;
+		border-color: #262;
 	}
 
 	footer {

@@ -4,6 +4,8 @@ let daftarLabel = [];
 let cetakanTerpilih = '604';
 let jumlahKhatamTerpilih = 1;
 let jumlahHariTerpilih = 30;
+let sudahPernahKlik = false;
+let paragrafSelesaiBaca = document.createElement("p");
 
 Storage.prototype.getItemAsNumber = function(name) {
 	const item = this.getItem(name);
@@ -46,6 +48,9 @@ window.addEventListener('load', () => {
 	}
 	pilihJumlahHari.value = jumlahHariTerpilih;
 	localStorage.setItem('jumlahHariTerpilih', jumlahHariTerpilih);
+
+	paragrafSelesaiBaca.className = 'label-potongan paragraf-selesai-baca';
+	paragrafSelesaiBaca.innerHTML = '<span class="emoji">✨</span> Alhamdulillah, sudah selesai baca sesuai target.';
 
 	ambilDataPanduan();
 });
@@ -201,7 +206,10 @@ function buatDaftarBaca(dataTersusun) {
 			labelPotongan.id = `label-${i}-${j}`;
 			labelPotongan.innerHTML = `${daftarNamaSurah[surah]} (${surah}): ${ayat} <small>Halaman ${h0}–${h1}</small>`;
 			labelPotongan.addEventListener('click', ((z) => {
-				return () => pilihPotongan(z);
+				return () => {
+					sudahPernahKlik = true;
+					return pilihPotongan(z);
+				};
 			})(`label-${i}-${j}`));
 
 			const opsiPotongan = document.createElement('input');
@@ -218,6 +226,8 @@ function buatDaftarBaca(dataTersusun) {
 
 		daftarBaca.append(seksiHari);
 	}
+
+	daftarBaca.append(paragrafSelesaiBaca)
 
 	pilihPotongan();
 }
@@ -248,6 +258,18 @@ function pilihPotongan(_idLabel) {
 			label.getElementsByTagName('input')[0].checked = 'checked';
 			sorot = false;
 		}
+	}
+
+	const lastLabelId = daftarLabel[daftarLabel.length - 1].id;
+	if (lastLabelId === idLabel) {
+		paragrafSelesaiBaca.style.display = "block";
+		if (sudahPernahKlik) {
+			requestAnimationFrame(function () {
+				paragrafSelesaiBaca.scrollIntoView({ behavior: 'smooth' });
+			});
+		}
+	} else {
+		paragrafSelesaiBaca.style.display = "none";
 	}
 }
 
